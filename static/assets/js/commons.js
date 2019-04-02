@@ -431,7 +431,7 @@ function checkTestCaseFile() {
     if (fileInput) {
         $("#testcasefileform").submit();
     } else {
-        alert("请选择上传文件!\r\n支持的文件类型【.json】");
+        alert("请选择上传文件!\r\n支持的文件类型【.har】或【.json】");
     }
 }
 

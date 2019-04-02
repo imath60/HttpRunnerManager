@@ -28,6 +28,9 @@ from ApiManager.utils.task_opt import delete_task, change_task_status
 from ApiManager.utils.testcase import get_time_stamp
 from httprunner import HttpRunner
 
+from har2case.utils import load_har_log_entries
+from har2case.core import HarParser
+
 logger = logging.getLogger('HttpRunnerManager')
 
 
@@ -192,11 +195,21 @@ def import_case(request):
     :return:
     """
 
-    file_obj = request.FILES.get('myfile')
+    file_obj = request.FILES.get('testcasefile')
     file_name = file_obj.name
     with default_storage.open('tmp/' + file_name, 'wb+') as f:
         for chunk in file_obj.chunks():
             f.write(chunk)
+
+    path = default_storage.path('tmp/' + file_name)
+
+    (shotname, extension) = os.path.splitext(file_name)
+
+    if (".har" == extension):
+        har_parser = HarParser(path)
+        har_parser.gen_testcase(file_type="JSON")
+        file_name = shotname + ".json"
+
     with io.open('tmp/' + file_name, encoding='utf-8') as data_file:
         json_content = json.load(data_file)
 
