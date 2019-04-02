@@ -422,7 +422,18 @@ function init_acs(language, theme, editor) {
         autoScrollEditorIntoView: true
     });
 
-
 }
+
+
+function checkTestCaseFile() {
+    var fileInput = $('#testcasefile').get(0).files[0];
+    console.info(fileInput);
+    if (fileInput) {
+        $("#testcasefileform").submit();
+    } else {
+        alert("请选择上传文件!\r\n支持的文件类型【.json】");
+    }
+}
+
 
 

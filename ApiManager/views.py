@@ -192,20 +192,13 @@ def import_case(request):
     :return:
     """
 
-    print('import_case')
-
-    # data = {'test': {'request': {'url': '/klian/account/login', 'method': 'POST', 'json': {'h_lc': 'zh-Hans-CN', 'h_ch': 'appstore', 'h_dt_sub': 1, 'zone': 28800, 'h_src': 3, 'cate': 1, 'phone': '72110420268', 'pw': '57b96843f632159c', 'area': '86', 'h_ts': 1553751482822, 'h_av': '4.0.17', 'h_nt': 1, 'h_did': '0976fb9a82a0c111cd9f25d607ab160b78ea5911', 'h_m': 21180051, 'token': 'CJPdjAoQtbvx5AUYASIIaExIUnhWbVI=.41cfef9fea5ad3d8', 'h_bu': '20190321.203416', 'h_p': 21125, 'h_dt': 1}}, 'name': '登录-成功', 'validate': [{'comparator': 'equals', 'check': 'content.ret', 'expected': 1}], 'extract': [{'token': 'content.data.token'}]}}
-    # file_name = "test.json"
     file_obj = request.FILES.get('myfile')
     file_name = file_obj.name
-    with default_storage.open('tmp/'+file_name, 'wb+') as f:
+    with default_storage.open('tmp/' + file_name, 'wb+') as f:
         for chunk in file_obj.chunks():
             f.write(chunk)
-    with io.open('tmp/'+file_name, encoding='utf-8') as data_file:
+    with io.open('tmp/' + file_name, encoding='utf-8') as data_file:
         json_content = json.load(data_file)
-        # list = f.readlines()
-    print (json_content)
-    print (type(json_content))
 
     tests = {}
     for item in json_content:
@@ -213,11 +206,17 @@ def import_case(request):
         if key == "test":
             tests.update(test_block)
 
-    print(tests)
-    print(type(tests))
-    # data = dict(zip(list[0::2],list[1::2]))
-    # print(type(data))
-    # print(data)
+    if 'validate' in tests.keys():  # 适配validate两种格式
+        validate = tests.pop('validate')
+        new_validate = []
+        for check in validate:
+            if 'comparator' not in check.keys():
+                for key, value in check.items():
+                    tmp_check = {"check": value[0], "comparator": key, "expected": value[1]}
+                    new_validate.append(tmp_check)
+
+    tests['validate'] = new_validate
+
     account = request.session["now_account"]
     if request.is_ajax():
         testcase_info = json.loads(request.body.decode('utf-8'))
@@ -226,7 +225,6 @@ def import_case(request):
     elif request.method == 'POST':
         manage_info = {
             'account': account,
-            # 'request': json_content['test'],
             'request': tests,
             'project': ProjectInfo.objects.all().values('project_name').order_by('-create_time')
         }
