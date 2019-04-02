@@ -131,6 +131,11 @@
                         </button>
                         <button class="btn btn-info" value="添 加" onclick="add_row('header')">add headers</button>
                         <button class="btn btn-danger" value="删 除" onclick="del_row('header')">del headers</button>
+                        <button class="btn btn-info" value="添 加" onclick="add_row('cookie')">add cookies</button>
+                        <button class="btn btn-danger" value="删 除" onclick="del_row('cookie')">del cookies</button>
+                        <button class="btn btn-info" value="添 加" onclick="add_row('proxy')">add proxies</button>
+                        <button class="btn btn-danger" value="删 除" onclick="del_row('proxy')">del proxies</button>
+
                         <form id="config_request_data">
                             <table class="table table-hover table-condensed table-bordered table-striped" id="data">
                                 <caption>data:</caption>
@@ -150,6 +155,36 @@
                         <form id="config_request_headers">
                             <table class="table table-hover table-condensed table-bordered table-striped" id="header">
                                 <caption>headers:</caption>
+                                <thead>
+                                <tr class="active text-success">
+                                    <th width="5%" align="center">Option</th>
+                                    <th width="40%" align="center">Key</th>
+                                    <th width="55%" align="center">Value</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </form>
+
+                        <form id="config_request_cookies">
+                            <table class="table table-hover table-condensed table-bordered table-striped" id="cookie">
+                                <caption>cookies:</caption>
+                                <thead>
+                                <tr class="active text-success">
+                                    <th width="5%" align="center">Option</th>
+                                    <th width="40%" align="center">Key</th>
+                                    <th width="55%" align="center">Value</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </form>
+
+                        <form id="config_request_proxies">
+                            <table class="table table-hover table-condensed table-bordered table-striped" id="proxy">
+                                <caption>proxies:</caption>
                                 <thead>
                                 <tr class="active text-success">
                                     <th width="5%" align="center">Option</th>

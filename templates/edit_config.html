@@ -259,6 +259,11 @@
                         </button>
                         <button class="btn btn-info" value="添 加" onclick="add_row('header')">add headers</button>
                         <button class="btn btn-danger" value="删 除" onclick="del_row('header')">del headers</button>
+                        <button class="btn btn-info" value="添 加" onclick="add_row('cookie')">add cookies</button>
+                        <button class="btn btn-danger" value="删 除" onclick="del_row('cookie')">del cookies</button>
+                        <button class="btn btn-info" value="添 加" onclick="add_row('proxy')">add proxies</button>
+                        <button class="btn btn-danger" value="删 除" onclick="del_row('proxy')">del proxies</button>
+
                         <form id="config_request_data">
                             {% if 'json' in request.request.keys %}
                                 <span style="font-size:10px;" id="json-text">
@@ -378,6 +383,62 @@
                                     {% for key, value in request.request.headers.items %}
                                         <tr>
                                             <td><input type="checkbox" name="header" style="width:55px">
+                                            </td>
+                                            <td><input type="text" name='test[][key]' value="{{ key }}"
+                                                       style="width:100%; border: none"></td>
+                                            <td><input type="text" name='test[][value]' value="{{ value }}"
+                                                       style="width:100%; border: none">
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% endif %}
+                                </tbody>
+                            </table>
+                        </form>
+
+                        <form id="config_request_cookies">
+                            <table class="table table-hover table-condensed table-bordered table-striped" id="cookie">
+                                <caption>cookies:</caption>
+                                <thead>
+                                <tr class="active text-success">
+                                    <th width="5%" align="center">Option</th>
+                                    <th width="40%" align="center">Key</th>
+                                    <th width="55%" align="center">Value</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% if 'cookies' in request.request.keys %}
+                                    {% for key, value in request.request.cookies.items %}
+                                        <tr>
+                                            <td><input type="checkbox" name="cookie" style="width:55px">
+                                            </td>
+                                            <td><input type="text" name='test[][key]' value="{{ key }}"
+                                                       style="width:100%; border: none"></td>
+                                            <td><input type="text" name='test[][value]' value="{{ value }}"
+                                                       style="width:100%; border: none">
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% endif %}
+                                </tbody>
+                            </table>
+                        </form>
+
+                        <form id="config_request_proxies">
+                            <table class="table table-hover table-condensed table-bordered table-striped" id="proxy">
+                                <caption>proxies:</caption>
+                                <thead>
+                                <tr class="active text-success">
+                                    <th width="5%" align="center">Option</th>
+                                    <th width="40%" align="center">Key</th>
+                                    <th width="55%" align="center">Value</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% if 'cookies' in request.request.keys %}
+                                    {% for key, value in request.request.proxies.items %}
+                                        <tr>
+                                            <td><input type="checkbox" name="proxy" style="width:55px">
                                             </td>
                                             <td><input type="text" name='test[][key]' value="{{ key }}"
                                                        style="width:100%; border: none"></td>

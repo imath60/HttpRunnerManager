@@ -122,6 +122,10 @@ def key_value_dict(keyword, **kwargs):
             if key != '':
                 if keyword == 'headers':
                     value[key] = val
+                elif keyword == 'cookies':
+                    value[key] = val
+                elif keyword == 'proxies':
+                    value[key] = val
                 elif keyword == 'data':
                     msg = type_change(type, val)
                     if msg == 'exception':
@@ -283,6 +287,15 @@ def case_info_logic(type=True, **kwargs):
         if headers:
             test.get('request').setdefault('headers', key_value_dict('headers', **headers))
 
+        cookies = test.get('request').pop('cookies')
+        if cookies:
+            test.get('request').setdefault('cookies', key_value_dict('cookies', **cookies))
+
+        proxies = test.get('request').pop('proxies')
+        if proxies:
+            test.get('request').setdefault('proxies', key_value_dict('proxies', **proxies))
+            test.get('request').setdefault('verify', False)
+
         variables = test.pop('variables')
         if variables:
             variables_list = key_value_list('variables', **variables)
@@ -361,6 +374,15 @@ def config_info_logic(type=True, **kwargs):
         headers = config.get('request').pop('headers')
         if headers:
             config.get('request').setdefault('headers', key_value_dict('headers', **headers))
+
+        cookies = config.get('request').pop('cookies')
+        if cookies:
+            config.get('request').setdefault('cookies', key_value_dict('cookies', **cookies))
+
+        proxies = config.get('request').pop('proxies')
+        if proxies:
+            config.get('request').setdefault('proxies', key_value_dict('proxies', **proxies))
+            config.get('request').setdefault('verify', False)
 
         variables = config.pop('variables')
         if variables:

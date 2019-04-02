@@ -51,8 +51,7 @@ function info_ajax(id, url) {
                 } else {
                     myAlert(data);
                 }
-            }
-            else {
+            } else {
                 window.location.reload();
             }
         }
@@ -66,7 +65,7 @@ function info_ajax(id, url) {
 
 function auto_load(id, url, target, type) {
     var data = $(id).serializeJSON();
-    if (id === '#form_message' || id ==='#belong_message' || id === '#pro_filter') {
+    if (id === '#form_message' || id === '#belong_message' || id === '#pro_filter') {
         data = {
             "test": {
                 "name": data,
@@ -118,8 +117,7 @@ function update_data_ajax(id, url) {
         success: function (data) {
             if (data !== 'ok') {
                 myAlert(data);
-            }
-            else {
+            } else {
                 window.location.reload();
             }
         },
@@ -142,8 +140,7 @@ function del_data_ajax(id, url) {
         success: function (data) {
             if (data !== 'ok') {
                 myAlert(data);
-            }
-            else {
+            } else {
                 window.location.reload();
             }
         },
@@ -166,8 +163,7 @@ function copy_data_ajax(id, url) {
         success: function (data) {
             if (data !== 'ok') {
                 myAlert(data);
-            }
-            else {
+            } else {
                 window.location.reload();
             }
         },
@@ -186,9 +182,8 @@ function case_ajax(type, editor) {
     var request_data = null;
     if (dataType.DataType === 'json') {
         try {
-            request_data  = eval('(' + editor.session.getValue() + ')');
-        }
-        catch (err) {
+            request_data = eval('(' + editor.session.getValue() + ')');
+        } catch (err) {
             myAlert('Json格式输入有误！');
             return
         }
@@ -196,6 +191,8 @@ function case_ajax(type, editor) {
         request_data = $("#form_request_data").serializeJSON();
     }
     var headers = $("#form_request_headers").serializeJSON();
+    var cookies = $("#form_request_cookies").serializeJSON();
+    var proxies = $("#form_request_proxies").serializeJSON();
     var extract = $("#form_extract").serializeJSON();
     var validate = $("#form_validate").serializeJSON();
     var parameters = $('#form_params').serializeJSON();
@@ -215,6 +212,8 @@ function case_ajax(type, editor) {
                 "url": url.url,
                 "method": method.method,
                 "headers": headers,
+                "cookies": cookies,
+                "proxies": proxies,
                 "type": dataType.DataType,
                 "request_data": request_data
             },
@@ -223,6 +222,7 @@ function case_ajax(type, editor) {
             "hooks": hooks,
         }
     };
+
     if (type === 'edit') {
         url = '/api/edit_case/';
     } else {
@@ -260,8 +260,7 @@ function config_ajax(type) {
     if (dataType.DataType === 'json') {
         try {
             request_data = eval('(' + editor.session.getValue() + ')');
-        }
-        catch (err) {
+        } catch (err) {
             myAlert('Json格式输入有误！');
             return
         }
@@ -269,7 +268,8 @@ function config_ajax(type) {
         request_data = $("#config_request_data").serializeJSON();
     }
     var headers = $("#config_request_headers").serializeJSON();
-
+    var cookies = $("#config_request_cookies").serializeJSON();
+    var proxies = $("#config_request_proxies").serializeJSON();
     const config = {
         "config": {
             "name": caseInfo,
@@ -277,6 +277,8 @@ function config_ajax(type) {
             "parameters": parameters,
             "request": {
                 "headers": headers,
+                "cookies": cookies,
+                "proxies": proxies,
                 "type": dataType.DataType,
                 "request_data": request_data
             },
@@ -346,7 +348,6 @@ function del_row(id) {
         }
     }
 }
-
 
 function add_row(id) {
     var tabObj = document.getElementById(id);//获取添加数据的表格

@@ -16,6 +16,7 @@
                             <div class="input-group col-md-10 col-md-offset-1">
                                 <div class="input-group-addon" style="color: #0a628f">项目列表</div>
                                 <select id='belong_project' name="project" class="form-control"
+                                        onclick="auto_load('#form_message', '/api/add_case/', '#belong_module_id', 'module')"
                                         onchange="auto_load('#form_message', '/api/add_case/', '#belong_module_id', 'module')">
                                     <option value="{{ info.belong_project.project_name }}">{{ info.belong_project.project_name }}</option>
                                     {% for foo in project %}
