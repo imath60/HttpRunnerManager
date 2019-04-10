@@ -234,7 +234,11 @@
                                         <option>GET</option>
                                         <option>POST</option>
                                         <option>DELETE</option>
-
+                                    {% else %}
+                                        <option selected>POST</option>
+                                        <option>GET</option>
+                                        <option>PUT</option>
+                                        <option>DELETE</option>
                                     {% endif %}
                                 </select>
                             </div>

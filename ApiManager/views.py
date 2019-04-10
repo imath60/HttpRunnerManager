@@ -19,7 +19,7 @@ from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, E
 from ApiManager.tasks import main_hrun
 from ApiManager.utils.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
     set_filter_session, get_ajax_msg, register_info_logic, task_logic, load_modules, upload_file_logic, \
-    init_filter_session, get_total_values, timestamp_to_datetime
+    init_filter_session, get_total_values, timestamp_to_datetime, hold_time_logic
 from ApiManager.utils.operation import env_data_logic, del_module_data, del_project_data, del_test_data, copy_test_data, \
     del_report_data, add_suite_data, copy_suite_data, del_suite_data, edit_suite_data, add_test_reports
 from ApiManager.utils.pagination import get_pager_info
@@ -837,6 +837,27 @@ def edit_suite(request, id=None):
     }
     return render_to_response('edit_suite.html', manage_info)
 
+@login_check
+def hold_time(request):
+    """
+    一键约课
+    :param request:
+    :return:
+    """
+    account = request.session["now_account"]
+    if request.is_ajax():
+        holdtime_info = json.loads(request.body.decode('utf-8'))
+        print(holdtime_info)
+        msg = hold_time_logic(**holdtime_info)
+        return HttpResponse(get_ajax_msg(msg, '/api/hold_time/'))
+
+    elif request.method == 'GET':
+        # manage_info = {
+        #     'account': account,
+        #     'project': ProjectInfo.objects.all().values('project_name').order_by('-create_time')
+        # }
+        # return render_to_response('add_case.html', manage_info)
+        return render_to_response('hold_time.html')
 
 @login_check
 @accept_websocket

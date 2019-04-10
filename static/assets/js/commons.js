@@ -27,6 +27,25 @@ function show_case(case_info, id) {
 
 }
 
+/*测试工具箱异步传输*/
+function tool_ajax(id, url) {
+    var data = $(id).serializeJSON();
+
+    $.ajax( {
+        type: 'post',
+        url: url,
+        data: JSON.stringify(data),
+        contentType: "application/json",
+        success: function (data) {
+            myAlert(data);
+        }
+        ,
+        error: function () {
+            myAlert('Sorry，服务器可能开小差啦, 请重试!');
+        }
+    })
+}
+
 /*表单信息异步传输*/
 function info_ajax(id, url) {
     var data = $(id).serializeJSON();

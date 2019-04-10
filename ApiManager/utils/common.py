@@ -6,6 +6,10 @@ import os
 import platform
 from json import JSONDecodeError
 
+import hashlib
+import time
+import requests
+
 import yaml
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Sum
@@ -221,6 +225,107 @@ def project_info_logic(type=True, **kwargs):
         return '发布应用不能为空'
 
     return add_project_data(type, **kwargs)
+
+def get_pw_md5(pw):
+    pw = str(pw)
+    m = hashlib.md5()
+    b = pw.encode(encoding='utf-8')
+    m.update(b)
+    pw_md5 = m.hexdigest()
+
+    return pw_md5[:16]
+
+
+def get_timestamp(dt):
+    dt = str(dt)
+    time_arr = time.strptime(dt, "%Y-%m-%d %H:%M:%S")
+    # 转换成时间戳
+    timestamp = time.mktime(time_arr)
+    return int(timestamp)
+
+def request_post(data_req):
+    resp = requests.post(url=data_req['url'], json=data_req['json'])
+    print(resp.text)
+    data_resp = json.loads(resp.content)
+    return data_resp
+
+def hold_time_logic(**kwargs):
+    """
+    一键约课逻辑处理
+    :param kwargs:
+    :return:
+    """
+    phone_teacher = kwargs.pop('phone_teacher')
+    pw_teacher = kwargs.pop('pw_teacher')
+    phone_student = kwargs.pop('phone_student')
+    pw_student = kwargs.pop('pw_student')
+    dt = kwargs.pop('dt')
+
+    # 构造教师登录参数
+    data_login_teacher = dict()
+    data_login_teacher['phone'] = phone_teacher
+    data_login_teacher['pw'] = get_pw_md5(pw_teacher)
+    data_login_teacher['area'] = '86'
+    data_login_teacher['cate'] = 2  # 教师标志位
+
+    req_login_teacher = dict()
+    req_login_teacher['url'] = 'https://test.ipalfish.com/klian/account/login'
+    req_login_teacher['json'] = data_login_teacher
+
+    resp_login_teacher = request_post(req_login_teacher)
+
+    if (resp_login_teacher['ret'] != 1):
+        return resp_login_teacher['msg']
+
+    # 构造学生登录参数
+    data_login_student = dict()
+    data_login_student['phone'] = phone_student
+    data_login_student['pw'] = get_pw_md5(pw_student)
+    data_login_student['area'] = '86'
+    data_login_student['cate'] = 1  # 学生标志位
+
+    req_login_student = dict()
+    req_login_student['url'] = 'https://test.ipalfish.com/klian/account/login'
+    req_login_student['json'] = data_login_student
+
+    resp_login_student = request_post(req_login_student)
+    if (resp_login_student['ret'] != 1):
+        return resp_login_student['msg']
+
+    # 构造教师开启预约
+    data_reserve_open_teacher = dict()
+    data_reserve_open_teacher['token'] = resp_login_teacher['data']['token']
+    data_reserve_open_teacher['roll'] = 10
+    data_reserve_open_teacher['stamp'] = get_timestamp(dt)
+    data_reserve_open_teacher['onlyofficial'] = True
+    data_reserve_open_teacher['cate'] = 2
+    data_reserve_open_teacher['h_m'] = resp_login_teacher['data']['member_info']['id']
+
+    req_reserve_open_teacher = dict()
+    req_reserve_open_teacher['url'] = 'https://test.ipalfish.com/klian/reserve/open'
+    req_reserve_open_teacher['json'] = data_reserve_open_teacher
+
+    resp_reserve_open = request_post(req_reserve_open_teacher)
+    if (resp_reserve_open['ret'] != 1):
+        return resp_reserve_open['msg']
+
+    # 构造学生约课
+    data_hold_time_student = dict()
+    data_hold_time_student['token'] = resp_login_student['data']['token']
+    data_hold_time_student['cate'] = 1
+    data_hold_time_student['h_m'] = resp_login_student['data']['member_info']['id']
+    data_hold_time_student['teaid'] = resp_login_teacher['data']['member_info']['id']
+    data_hold_time_student['kid'] = 173108934578178
+    data_hold_time_student['stamp'] = get_timestamp(dt)
+
+    req_hold_time_student = dict()
+    req_hold_time_student['url'] = 'https://test.ipalfish.com/klian/ugc/curriculum/classroom/hold/time'
+    req_hold_time_student['json'] = data_hold_time_student
+
+    resp_hold_time_student = request_post(req_hold_time_student)
+    if (resp_hold_time_student['ret'] != 1):
+        return resp_hold_time_student['msg']
+    return 'success'
 
 
 def case_info_logic(type=True, **kwargs):

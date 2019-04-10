@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}一键约课{% endblock %}
+{% load staticfiles %}
+{% block content %}
+
+    <div class=" admin-content">
+
+        <div class="admin-biaogelist">
+            <div class="listbiaoti am-cf">
+                <ul class="am-icon-flag on"> 一键约课</ul>
+                <dl class="am-icon-home" style="float: right;"> 当前位置： 测试工具箱 > <a href="#">一键约课</a></dl>
+            </div>
+            <div class="fbneirong">
+                <form class="form-horizontal" id="hold_time">
+                    <div class="form-group  has-feedback">
+                        <label class="control-label col-md-1 text-primary" for="phone_teacher">教师手机号：</label>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" id="phone_teacher"
+                                   aria-describedby="inputSuccess3Status" name="phone_teacher" placeholder="请输入教师手机号"
+                                   value="">
+                            <span class="glyphicon glyphicon-th-list form-control-feedback" aria-hidden="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group  has-feedback">
+                        <label class="control-label col-md-1 text-primary" for="pw_teacher">教师密码：</label>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" id="pw_teacher" name="pw_teacher"
+                                   aria-describedby="inputSuccess3Status" placeholder="请输入教师密码" value="">
+                            <span class="glyphicon glyphicon-user form-control-feedback" aria-hidden="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group  has-feedback">
+                        <label class="control-label col-md-1 text-primary" for="phone_student">学生手机号：</label>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" id="phone_student"
+                                   aria-describedby="inputSuccess3Status" name="phone_student" placeholder="请输入学生手机号"
+                                   value="">
+                            <span class="glyphicon glyphicon-th-list form-control-feedback" aria-hidden="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group  has-feedback">
+                        <label class="control-label col-md-1 text-primary" for="pw_student">学生密码：</label>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" id="pw_student" name="pw_student"
+                                   aria-describedby="inputSuccess3Status" placeholder="请输入学生密码" value="">
+                            <span class="glyphicon glyphicon-user form-control-feedback" aria-hidden="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group  has-feedback">
+                        <label class="control-label col-md-1 text-primary" for="dt">约课时间：</label>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" id="dt" name="dt"
+                                   aria-describedby="inputSuccess3Status" placeholder="请输入约课时间" value="">
+                            <span class="glyphicon glyphicon-user form-control-feedback" aria-hidden="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="am-form-group am-cf">
+                        <div class="you" style="margin-left: 8%;">
+                            <button type="button" class="am-btn am-btn-success am-radius"
+                                    onclick="tool_ajax('#hold_time', '/api/hold_time/')">点 击 提 交
+                            </button>&nbsp;
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

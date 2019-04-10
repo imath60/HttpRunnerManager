@@ -363,6 +363,7 @@
                             <div class="input-group">
                                 <div class="input-group-addon">Method</div>
                                 <select class="form-control" name="method" id="method">
+
                                     <option>{{ request.request.method }}</option>
                                     {% if request.request.method == 'GET' %}
                                         <option>POST</option>
