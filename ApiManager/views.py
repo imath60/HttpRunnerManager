@@ -4,6 +4,7 @@ import os
 import shutil
 import sys
 import io
+import ldap
 
 import paramiko
 from django.core.files.storage import default_storage
@@ -46,6 +47,25 @@ def login_check(func):
     return wrapper
 
 
+def ldap_check(username, password):
+    url = 'ldap://ldap.pri.ibanyu.com:389'
+    dn = "cn=%s,ou=People,dc=ipalfish,dc=com" % username
+    conn = ldap.initialize(url)
+    try:
+        ret = conn.simple_bind_s(dn, password)
+        print(ret)
+        return ret[0]
+    except ldap.SERVER_DOWN:
+        print("无法连接到LDAP")
+        return -1
+    except ldap.INVALID_CREDENTIALS:
+        print("LDAP账号或密码错误")
+        return -1
+    except Exception as ex:
+        print("未知错误")
+        return -1
+
+
 def login(request):
     """
     登录
@@ -56,7 +76,9 @@ def login(request):
         username = request.POST.get('account')
         password = request.POST.get('password')
 
-        if UserInfo.objects.filter(username__exact=username).filter(password__exact=password).count() == 1:
+        ret = ldap_check(username,password)
+        if (ret == 97):
+            # if UserInfo.objects.filter(username__exact=username).filter(password__exact=password).count() == 1:
             logger.info('{username} 登录成功'.format(username=username))
             request.session["login_status"] = True
             request.session["now_account"] = username
@@ -64,7 +86,8 @@ def login(request):
         else:
             logger.info('{username} 登录失败, 请检查用户名或者密码'.format(username=username))
             request.session["login_status"] = False
-            return render_to_response("login.html")
+            error_msg = '{username} 登录失败, 请检查用户名或者密码'.format(username=username)
+            return render_to_response("login.html",{'error_msg':error_msg})
     elif request.method == 'GET':
         return render_to_response("login.html")
 
@@ -837,6 +860,7 @@ def edit_suite(request, id=None):
     }
     return render_to_response('edit_suite.html', manage_info)
 
+
 @login_check
 def hold_time(request):
     """
@@ -848,7 +872,7 @@ def hold_time(request):
     if request.is_ajax():
         holdtime_info = json.loads(request.body.decode('utf-8'))
         print(holdtime_info)
-        msg = hold_time_logic(**holdtime_info)
+        m = hold_time_logic(**holdtime_info)
         return HttpResponse(get_ajax_msg(msg, '/api/hold_time/'))
 
     elif request.method == 'GET':
@@ -858,6 +882,7 @@ def hold_time(request):
         # }
         # return render_to_response('add_case.html', manage_info)
         return render_to_response('hold_time.html')
+
 
 @login_check
 @accept_websocket
