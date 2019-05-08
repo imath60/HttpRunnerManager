@@ -352,6 +352,19 @@ def del_test_data(id):
     logging.info('用例/配置已删除')
     return 'ok'
 
+def batch_del_test_data(ids):
+    """
+    根据用例或配置索引批量删除数据
+    :param id: str or int: test or config index
+    :return: ok or tips
+    """
+    try:
+        for id in ids:
+            TestCaseInfo.objects.get(id=id).delete()
+    except ObjectDoesNotExist:
+        return '删除异常，请重试'
+    logging.info('用例/配置已删除')
+    return 'ok'
 
 def del_suite_data(id):
     """
@@ -379,6 +392,19 @@ def del_report_data(id):
         return '删除异常，请重试'
     return 'ok'
 
+def batch_del_report_data(ids):
+    """
+    根据报告索引批量删除报告
+    :param id: str or int: test or config index
+    :return: ok or tips
+    """
+    try:
+        for id in ids:
+            TestReports.objects.get(id=id).delete()
+    except ObjectDoesNotExist:
+        return '删除异常，请重试'
+    logging.info('报告已删除')
+    return 'ok'
 
 def copy_test_data(id, name):
     """

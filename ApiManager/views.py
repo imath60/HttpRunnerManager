@@ -22,7 +22,7 @@ from ApiManager.utils.common import module_info_logic, project_info_logic, case_
     set_filter_session, get_ajax_msg, register_info_logic, task_logic, load_modules, upload_file_logic, \
     init_filter_session, get_total_values, timestamp_to_datetime, hold_time_logic
 from ApiManager.utils.operation import env_data_logic, del_module_data, del_project_data, del_test_data, copy_test_data, \
-    del_report_data, add_suite_data, copy_suite_data, del_suite_data, edit_suite_data, add_test_reports
+    del_report_data, add_suite_data, copy_suite_data, del_suite_data, edit_suite_data, add_test_reports, batch_del_test_data, batch_del_report_data
 from ApiManager.utils.pagination import get_pager_info
 from ApiManager.utils.runner import run_by_batch, run_test_by_type
 from ApiManager.utils.task_opt import delete_task, change_task_status
@@ -324,7 +324,6 @@ def run_test(request):
 
         return render_to_response('report_template.html', runner.summary)
 
-
 @login_check
 def run_batch_test(request):
     """
@@ -444,11 +443,16 @@ def test_list(request, id):
     account = request.session["now_account"]
     if request.is_ajax():
         test_info = json.loads(request.body.decode('utf-8'))
-
         if test_info.get('mode') == 'del':
             msg = del_test_data(test_info.pop('id'))
         elif test_info.get('mode') == 'copy':
             msg = copy_test_data(test_info.get('data').pop('index'), test_info.get('data').pop('name'))
+        elif test_info.get('mode') == 'batch_del':
+            ids = test_info['id']
+            ids_list = list()
+            for name, id in ids.items():
+                ids_list.append(id)
+            msg = batch_del_test_data(ids_list)
         return HttpResponse(get_ajax_msg(msg, 'ok'))
 
     else:
@@ -605,6 +609,12 @@ def report_list(request, id):
 
         if report_info.get('mode') == 'del':
             msg = del_report_data(report_info.pop('id'))
+        elif report_info.get('mode') == 'batch_del':
+            ids = report_info['id']
+            ids_list = list()
+            for name, id in ids.items():
+                ids_list.append(id)
+            msg = batch_del_report_data(ids_list)
         return HttpResponse(get_ajax_msg(msg, 'ok'))
     else:
         filter_query = set_filter_session(request)

@@ -146,6 +146,29 @@ function update_data_ajax(id, url) {
     });
 }
 
+function batch_del_data_ajax(id, url) {
+        var data = {
+        "id": id,
+        'mode': 'batch_del'
+    };
+    $.ajax({
+        type: 'post',
+        url: url,
+        data: JSON.stringify(data),
+        contentType: "application/json",
+        success: function (data) {
+            if (data !== 'ok') {
+                myAlert(data);
+            } else {
+                window.location.reload();
+            }
+        },
+        error: function () {
+            myAlert('Sorry，服务器可能开小差啦, 请重试!');
+        }
+    });
+}
+
 function del_data_ajax(id, url) {
     var data = {
         "id": id,

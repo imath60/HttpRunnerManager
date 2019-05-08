@@ -88,6 +88,9 @@
                 <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-bug"
                         onclick="my_submit()">运行
                 </button>
+                <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-trash-o"
+                        onclick="batch_delete()">删除
+                </button>
             </dl>
         </div>
 
@@ -187,7 +190,7 @@
                                             {% else %}
                                                 {% if path.1|is_del == True %}
                                                     <li id="{{ path.0 }}" s>
-                                                       <span style="color: red;">{{ path.1 }}</span>
+                                                        <span style="color: red;">{{ path.1 }}</span>
                                                     </li>
                                                 {% else %}
                                                     <li id="{{ path.0 }}">
@@ -277,6 +280,26 @@
                             var obj = JSON.parse(json2map);
                             obj['env_name'] = $('#env_name').val();
                             post('/api/run_batch_test/', obj)
+                        },
+                        onCancel: function () {
+                        }
+                    }
+                );
+            }
+        }
+
+        function batch_delete() {
+            if ($("input:checked").size() == 0) {
+                myAlert("请至少选择一条用例运行！");
+            } else {
+                $('#my-invalid').modal({
+                        relatedTarget: this,
+                        onConfirm: function () {
+                            var data = $("#test_list").serializeJSON();
+                            {#var json2map = JSON.stringify(data);#}
+                            {#var obj = JSON.parse(json2map);#}
+                            {#obj['mode'] = 'batch_del';#}
+                            batch_del_data_ajax(data, '/api/test_list/1/')
                         },
                         onCancel: function () {
                         }
