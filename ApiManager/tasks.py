@@ -63,7 +63,11 @@ def project_hrun(name, base_url, project, receiver):
     runner.summary = timestamp_to_datetime(runner.summary)
     report_path = add_test_reports(runner, report_name=name)
 
-    if receiver != '':
+    testsRun = runner.summary['stat']['testsRun']
+    success = runner.summary['stat']['successes']
+    unsuccess = testsRun - success
+
+    if receiver != '' and unsuccess > 0:
         send_email_reports(receiver, report_path)
     os.remove(report_path)
 
@@ -99,7 +103,11 @@ def module_hrun(name, base_url, module, receiver):
     runner.summary = timestamp_to_datetime(runner.summary)
     report_path = add_test_reports(runner, report_name=name)
 
-    if receiver != '':
+    testsRun = runner.summary['stat']['testsRun']
+    success = runner.summary['stat']['successes']
+    unsuccess = testsRun - success
+
+    if receiver != '' and unsuccess > 0:
         send_email_reports(receiver, report_path)
     os.remove(report_path)
 
@@ -136,6 +144,10 @@ def suite_hrun(name, base_url, suite, receiver):
     runner.summary = timestamp_to_datetime(runner.summary)
     report_path = add_test_reports(runner, report_name=name)
 
-    if receiver != '':
+    testsRun = runner.summary['stat']['testsRun']
+    success = runner.summary['stat']['successes']
+    unsuccess = testsRun - success
+
+    if receiver != '' and unsuccess > 0:
         send_email_reports(receiver, report_path)
     os.remove(report_path)

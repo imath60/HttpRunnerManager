@@ -12,3 +12,6 @@ Test Report.html
 ApiManager/templatetags/*.pyc
 *.pyc
 celerybeat.pid
+tmp/
+suite/
+*.log

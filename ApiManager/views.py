@@ -872,7 +872,7 @@ def hold_time(request):
     if request.is_ajax():
         holdtime_info = json.loads(request.body.decode('utf-8'))
         print(holdtime_info)
-        m = hold_time_logic(**holdtime_info)
+        msg = hold_time_logic(**holdtime_info)
         return HttpResponse(get_ajax_msg(msg, '/api/hold_time/'))
 
     elif request.method == 'GET':
