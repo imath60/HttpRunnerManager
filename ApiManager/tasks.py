@@ -9,7 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from ApiManager.models import ProjectInfo
 from ApiManager.utils.common import timestamp_to_datetime
-from ApiManager.utils.emails import send_email_reports
+from ApiManager.utils.emails import send_email_reports, send_dingtalk_alert
 from ApiManager.utils.operation import add_test_reports
 from ApiManager.utils.runner import run_by_project, run_by_module, run_by_suite
 from ApiManager.utils.testcase import get_time_stamp
@@ -33,7 +33,7 @@ def main_hrun(testset_path, report_name):
     shutil.rmtree(testset_path)
 
     runner.summary = timestamp_to_datetime(runner.summary)
-    report_path = add_test_reports(runner, report_name=report_name)
+    report_path, report_id = add_test_reports(runner, report_name=report_name)
     os.remove(report_path)
 
 
@@ -61,11 +61,16 @@ def project_hrun(name, base_url, project, receiver):
     shutil.rmtree(testcase_dir_path)
 
     runner.summary = timestamp_to_datetime(runner.summary)
-    report_path = add_test_reports(runner, report_name=name)
+    report_path, report_id = add_test_reports(runner, report_name=name)
 
     testsRun = runner.summary['stat']['testsRun']
     success = runner.summary['stat']['successes']
     unsuccess = testsRun - success
+
+    report_url = "http://fct.pri.ibanyu.com/api/view_report/" + str(report_id)
+
+    if unsuccess > 0:
+        send_dingtalk_alert(report_url, name, testsRun, success, unsuccess)
 
     if receiver != '' and unsuccess > 0:
         send_email_reports(receiver, report_path)
@@ -101,11 +106,16 @@ def module_hrun(name, base_url, module, receiver):
 
     shutil.rmtree(testcase_dir_path)
     runner.summary = timestamp_to_datetime(runner.summary)
-    report_path = add_test_reports(runner, report_name=name)
+    report_path, report_id = add_test_reports(runner, report_name=name)
 
     testsRun = runner.summary['stat']['testsRun']
     success = runner.summary['stat']['successes']
     unsuccess = testsRun - success
+
+    report_url = "http://fct.pri.ibanyu.com/api/view_report/" + str(report_id)
+
+    if unsuccess > 0:
+        send_dingtalk_alert(report_url, name, testsRun, success, unsuccess)
 
     if receiver != '' and unsuccess > 0:
         send_email_reports(receiver, report_path)
@@ -142,11 +152,16 @@ def suite_hrun(name, base_url, suite, receiver):
     shutil.rmtree(testcase_dir_path)
 
     runner.summary = timestamp_to_datetime(runner.summary)
-    report_path = add_test_reports(runner, report_name=name)
+    report_path, report_id = add_test_reports(runner, report_name=name)
 
     testsRun = runner.summary['stat']['testsRun']
     success = runner.summary['stat']['successes']
     unsuccess = testsRun - success
+
+    report_url = "http://fct.pri.ibanyu.com/api/view_report/" + str(report_id)
+
+    if unsuccess > 0:
+        send_dingtalk_alert(report_url, name, testsRun, success, unsuccess)
 
     if receiver != '' and unsuccess > 0:
         send_email_reports(receiver, report_path)

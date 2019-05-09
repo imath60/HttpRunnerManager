@@ -482,5 +482,6 @@ def add_test_reports(runner, report_name=None):
         'reports': reports
     }
 
-    TestReports.objects.create(**test_reports)
-    return report_path
+    insertRes = TestReports.objects.create(**test_reports)
+    report_id = insertRes.id
+    return report_path, report_id

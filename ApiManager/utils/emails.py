@@ -7,6 +7,16 @@ import os
 
 from HttpRunnerManager.settings import EMAIL_SEND_USERNAME, EMAIL_SEND_PASSWORD
 
+from dingtalkchatbot.chatbot import DingtalkChatbot
+
+
+def send_dingtalk_alert(report_url, name, testsRun, success, unsuccess):
+    title = "定时任务【%s】测试报告" % name
+    text = "执行用例数【%s】\n成功用例数【%s】\n失败用例数【%s】" % (testsRun, success, unsuccess)
+    webhook = 'https://oapi.dingtalk.com/robot/send?access_token=b2b8573a3f5e8685fa504f1fa6fe084c7b33303ed5291d0bcae6a594b12a6914'
+    xiaoding = DingtalkChatbot(webhook)
+    xiaoding.send_link(title=title, text=text, message_url=report_url)
+
 
 def send_email_reports(receiver, html_report_path):
     if '@sina.com' in EMAIL_SEND_USERNAME:
