@@ -9,6 +9,22 @@ from HttpRunnerManager.settings import EMAIL_SEND_USERNAME, EMAIL_SEND_PASSWORD
 
 from dingtalkchatbot.chatbot import DingtalkChatbot
 
+import requests
+
+
+def send_ibanyu_alert(group, source, testsRun, success, unsuccess, report_url):
+    alert_dict = dict()
+    alert_dict['business'] = '自动化测试'
+    alert_dict['section'] = '定时任务'
+    alert_dict['group'] = str(group)
+    alert_dict['source'] = str(source)
+    alert_dict['title'] = "定时任务【%s】测试摘要" % str(group)
+    alert_dict['content'] = "执行用例数【%s】\n成功用例数【%s】\n失败用例数【%s】\n报告地址【%s】" % (testsRun, success, unsuccess, report_url)
+
+    url = 'http://alarm.pri.ibanyu.com:8188/put/alert'
+    resp = requests.post(url=url, json=alert_dict)
+    print(resp.text)
+
 
 def send_dingtalk_alert(report_url, name, testsRun, success, unsuccess):
     title = "定时任务【%s】测试报告" % name
@@ -53,4 +69,10 @@ def send_email_reports(receiver, html_report_path):
 
 
 if __name__ == '__main__':
-    send_email_reports('liuyuan2680@ipalfish.com', '/Users/yuxin/Downloads/1555658400.html')
+    name = '测试'
+    module = '账号'
+    testsRun = 2
+    success = 1
+    unsuccess = 1
+    report_url = 'http://127.0.0.1:8001/api/view_report/82/'
+    send_ibanyu_alert(name, module, testsRun, success, unsuccess, report_url)

@@ -9,7 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from ApiManager.models import ProjectInfo
 from ApiManager.utils.common import timestamp_to_datetime
-from ApiManager.utils.emails import send_email_reports, send_dingtalk_alert
+from ApiManager.utils.emails import send_email_reports, send_dingtalk_alert, send_ibanyu_alert
 from ApiManager.utils.operation import add_test_reports
 from ApiManager.utils.runner import run_by_project, run_by_module, run_by_suite
 from ApiManager.utils.testcase import get_time_stamp
@@ -71,6 +71,7 @@ def project_hrun(name, base_url, project, receiver):
 
     if unsuccess > 0:
         send_dingtalk_alert(report_url, name, testsRun, success, unsuccess)
+        send_ibanyu_alert(name, project, testsRun, success, unsuccess, report_url)
 
     if receiver != '' and unsuccess > 0:
         send_email_reports(receiver, report_path)
@@ -116,6 +117,7 @@ def module_hrun(name, base_url, module, receiver):
 
     if unsuccess > 0:
         send_dingtalk_alert(report_url, name, testsRun, success, unsuccess)
+        send_ibanyu_alert(name, module, testsRun, success, unsuccess, report_url)
 
     if receiver != '' and unsuccess > 0:
         send_email_reports(receiver, report_path)
@@ -162,6 +164,7 @@ def suite_hrun(name, base_url, suite, receiver):
 
     if unsuccess > 0:
         send_dingtalk_alert(report_url, name, testsRun, success, unsuccess)
+        send_ibanyu_alert(name, suite, testsRun, success, unsuccess, report_url)
 
     if receiver != '' and unsuccess > 0:
         send_email_reports(receiver, report_path)
