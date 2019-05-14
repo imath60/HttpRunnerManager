@@ -30,11 +30,29 @@
         <div class="am-btn-toolbars am-btn-toolbar am-kg am-cf">
             <form id="pro_filter" method="post" action="/api/report_list/1/">
                 <ul>
-                    <li style="padding-top: 5px"><input value="{{ info.report_name }}" type="text" name="report_name"
-                                                        class="am-input-sm am-input-xm"
-                                                        placeholder="报告名称"/></li>
+                    <li style="padding-top: 5px">
+                        <input value="{{ info.report_name }}" type="text" name="report_name"
+                               class="am-input-sm am-input-xm"
+                               placeholder="报告名称"/>
+                    </li>
+                    <li style="padding-top: 5px">
+                        <select name="report_status" class="am-input-zm am-input-xm">
+                            {% if info.report_status == '0' %}
+                                <option value="{{ info.report_status }}" selected>Fail</option>
+                                <option value="1">Success</option>
+                                <option value="">All</option>
+                            {% elif info.report_status == '1' %}
+                                <option value="{{ info.report_status }}" selected>Success</option>
+                                <option value="1">Fail</option>
+                                <option value="">All</option>
+                            {% else %}
+                                <option value="">All</option>
+                                <option value="0">Fail</option>
+                                <option value="1">Success</option>
+                            {% endif %}
+                        </select>
+                    </li>
                     <li>
-
                         <button class="am-btn am-radius am-btn-xs am-btn-success"
                                 style="margin-top: 9px;">查询
                         </button>

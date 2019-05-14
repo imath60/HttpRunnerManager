@@ -590,13 +590,16 @@ def set_filter_session(request):
             request.session['module'] = request.POST.get('module')
     if 'report_name' in request.POST.keys():
         request.session['report_name'] = request.POST.get('report_name')
+    if 'report_status' in request.POST.keys():
+        request.session['report_status'] = request.POST.get('report_status')
 
     filter_query = {
         'user': request.session['user'],
         'name': request.session['name'],
         'belong_project': request.session['project'],
         'belong_module': request.session['module'],
-        'report_name': request.session['report_name']
+        'report_name': request.session['report_name'],
+        'report_status': request.session['report_status']
     }
 
     return filter_query
@@ -614,12 +617,14 @@ def init_filter_session(request, type=True):
         request.session['project'] = 'All'
         request.session['module'] = '请选择'
         request.session['report_name'] = ''
+        request.session['report_status'] = ''
     else:
         del request.session['user']
         del request.session['name']
         del request.session['project']
         del request.session['module']
         del request.session['report_name']
+        del request.session['report_status']
 
 
 def get_ajax_msg(msg, success):

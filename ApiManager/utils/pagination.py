@@ -121,7 +121,8 @@ def get_pager_info(Model, filter_query, url, id, per_items=12):
                 else obj.filter(test_user__contains=user)
 
     elif url == '/api/report_list/':
-        obj = obj.filter(report_name__contains=filter_query.get('report_name'))
+        obj = obj.filter(report_name__contains=filter_query.get('report_name'),
+                         status__contains=filter_query.get('report_status'))
 
     elif url == '/api/periodictask/':
         obj = obj.filter(name__contains=name).values('id', 'name', 'kwargs', 'enabled', 'date_changed') \
