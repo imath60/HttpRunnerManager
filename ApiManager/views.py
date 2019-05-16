@@ -500,6 +500,33 @@ def config_list(request, id):
         }
         return render_to_response('config_list.html', manage_info)
 
+@login_check
+def detail_case(request, id=None):
+    """
+    编辑用例
+    :param request:
+    :param id:
+    :return:
+    """
+
+    account = request.session["now_account"]
+
+    test_info = TestCaseInfo.objects.get_case_by_id(id)
+    request = eval(test_info[0].request)
+    include = eval(test_info[0].include)
+
+    manage_info = {
+        'account': account,
+        'info': test_info[0],
+        'request': request['test'],
+        'include': include,
+        'caseid': id,
+        'env': EnvInfo.objects.all().order_by('-create_time'),
+        'project': ProjectInfo.objects.all().values('project_name').order_by('-create_time')
+
+    }
+    return render_to_response('detail_case.html', manage_info)
+
 
 @login_check
 def edit_case(request, id=None):

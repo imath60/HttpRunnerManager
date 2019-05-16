@@ -450,7 +450,7 @@ function init_acs(language, theme, editor) {
     editor.setTheme("ace/theme/" + theme);
     editor.session.setMode("ace/mode/" + language);
 
-    editor.setFontSize(17);
+    editor.setFontSize(14);
 
     editor.setReadOnly(false);
 
@@ -466,6 +466,25 @@ function init_acs(language, theme, editor) {
 
 }
 
+function init_acs_readonly(language, theme, editor) {
+    editor.setTheme("ace/theme/" + theme);
+    editor.session.setMode("ace/mode/" + language);
+
+    editor.setFontSize(14);
+
+    editor.setReadOnly(true);
+
+    editor.setOption("wrap", "free");
+
+    ace.require("ace/ext/language_tools");
+    editor.setOptions({
+        enableBasicAutocompletion: true,
+        enableSnippets: true,
+        enableLiveAutocompletion: true,
+        autoScrollEditorIntoView: true
+    });
+
+}
 
 function checkTestCaseFile() {
     var fileInput = $('#testcasefile').get(0).files[0];

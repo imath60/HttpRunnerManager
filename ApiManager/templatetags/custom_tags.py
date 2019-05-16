@@ -31,6 +31,9 @@ def convert_eval(value):
 def json_dumps(value):
     return json.dumps(value, indent=4, separators=(',', ': '), ensure_ascii=False)
 
+@register.filter(name='str_length')
+def str_length(value):
+    return len(str(value))
 
 @register.filter(name='is_del')
 def id_del(value):

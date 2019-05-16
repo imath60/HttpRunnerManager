@@ -82,12 +82,36 @@
         </div>
     </div>
 
+    <div class="am-modal am-modal-confirm" tabindex="-1" id="select_env">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">HttpRunnerManager</div>
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label class="control-label col-sm-3"
+                           style="font-weight: inherit; font-size: small ">运行环境:</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" id="env_name" name="env_name">
+                            <option value="">自带环境</option>
+                            {% for foo in env %}
+                                <option value="{{ foo.base_url }}">{{ foo.env_name }}</option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+                </div>
+            </form>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+                <span class="am-modal-btn" data-am-modal-confirm>确定</span>
+            </div>
+        </div>
+    </div>
 
     <div class="admin-biaogelist" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 
         <div class="listbiaoti am-cf">
-            <ul class="am-icon-flag on"> 用例修改</ul>
-            <dl class="am-icon-home" style="float: right;">当前位置： 用例管理 > <a href="#">修改用例</a></dl>
+            <ul class="am-icon-flag on"> 用例详情</ul>
+            <dl class="am-icon-home" style="float: right;">当前位置： 用例管理 > <a href="#">用例详情</a></dl>
         </div>
 
         <div class="am-tabs am-margin">
@@ -106,7 +130,7 @@
                             <div class="form-group">
                                 <div class="input-group col-md-10 col-md-offset-1">
                                     <div class="input-group-addon" style="color: #0a628f">可选项目</div>
-                                    <select name="project" class="form-control"
+                                    <select name="project" class="form-control"  disabled="disabled"
                                             onchange="auto_load('#belong_message', '/api/edit_case/', '#belong_module_id', 'module')">
                                         <option value="{{ info.belong_project }}"
                                                 selected>{{ info.belong_project }}</option>
@@ -123,7 +147,7 @@
                             <div class="form-group">
                                 <div class="input-group col-md-10 col-md-offset-1">
                                     <div class="input-group-addon" style="color: #0a628f">可选模块</div>
-                                    <select id="belong_module_id" name="module" class="form-control"
+                                    <select id="belong_module_id" name="module" class="form-control"  disabled="disabled"
                                             onchange="auto_load('#belong_message', '/api/add_case/', '#belong_case_id', 'case');
                                         auto_load('#belong_message', '/api/edit_case/', '#config', 'config')">
                                         <option value="{{ info.belong_module.id }}">{{ info.belong_module.module_name }}</option>
@@ -134,7 +158,7 @@
                             <div class="form-group">
                                 <div class="input-group col-md-10 col-md-offset-1">
                                     <div class="input-group-addon" style="color: #0a628f">可选配置</div>
-                                    <select id="config" name="config" class="form-control">
+                                    <select id="config" name="config" class="form-control"  disabled="disabled">
                                         {% if 'config' in include.0.keys %}
                                             <option value="{{ include.0.config.0 }}">{{ include.0.config.1 }}</option>
                                         {% endif %}
@@ -145,7 +169,7 @@
                             <div class="form-group">
                                 <div class="input-group col-md-10 col-md-offset-1">
                                     <div class="input-group-addon" style="color: #0a628f">可选用例</div>
-                                    <select id="belong_case_id" name="include" class="form-control">
+                                    <select id="belong_case_id" name="include" class="form-control"  disabled="disabled">
                                     </select>
                                 </div>
                             </div>
@@ -154,10 +178,10 @@
                     <div style="float: right; width: 50%;margin-right: 1%;">
                         <div class="form-group">
                             <div class="input-group col-md-10">
-                                <div class="input-group-addon" id="close_collapse" style="color: #0a628f">用例列表</div>
+                                <div class="input-group-addon" id="close_collapse" style="color: #0a628f ">用例列表</div>
 
                                 <a class="am-btn am-btn-primary am-radius am-btn-block" href="#" id="pre_collapse"
-                                   style="font-size: 16px; background-color: #fff; color: #555; text-align: left"
+                                   style="font-size: 16px; background-color: #fff; color: #555; text-align: left"  disabled="disabled"
                                    data-am-collapse="{target: '#pre_case'}">
                                     用 例 执 行 顺 序
                                 </a>
@@ -169,14 +193,11 @@
                                                     <a href="/api/edit_config/{{ foo.config.0 }}/"
                                                        id="{{ foo.config.0 }}"
                                                        style="color:cadetblue">{{ foo.config.1 }}</a>
-                                                    <i class="js-remove"
-                                                       onclick=remove_self('#{{ foo.config.0 }}')>✖</i></li>
                                                 </li>
                                             {% else %}
                                                 <li id="{{ foo.0 }}">
-                                                    <a href="/api/edit_case/{{ foo.0 }}/"
+                                                    <a href="/api/detail_case/{{ foo.0 }}/"
                                                        id="{{ foo.0 }}">{{ foo.1 }}</a>
-                                                    <i class="js-remove" onclick=remove_self('#{{ foo.0 }}')>✖</i>
                                                 </li>
 
                                             {% endif %}
@@ -190,12 +211,6 @@
                     </div>
                 </div>
                 <div class="am-tab-panel" id="tab2">
-                    <button class="btn btn-info" value="添 加" onclick="add_row('variables')">add variables</button>
-                    <button class="btn btn-danger" value="删 除" onclick="del_row('variables')">del variables</button>
-                    <button class="btn btn-info" value="添 加" onclick="add_params('params')">add param</button>
-                    <button class="btn btn-danger" value="删 除" onclick="del_row('params')">del param</button>
-                    <button class="btn btn-info" value="添 加" onclick="add_row('hooks')">add hooks</button>
-                    <button class="btn btn-danger" value="删 除" onclick="del_row('hooks')">del hooks</button>
                     <form id="form_variables">
                         <table class="table table-hover table-condensed table-bordered table-striped" id="variables">
                             <caption>Variables:</caption>
@@ -210,15 +225,15 @@
                             <tbody>
                             {% for foo in request.variables %}
                                 <tr>
-                                    <td><input type="checkbox" name="variables" style="width:55px"></td>
+                                    <td><input type="checkbox" name="variables" style="width:55px" disabled="disabled"></td>
                                     {% for key, value in foo.items %}
 
                                         <td><input type="text" name="test[][key]"
-                                                   value="{{ key }}" style="width:100%; border: none"></td>
+                                                   value="{{ key }}" style="width:100%; border: none" disabled="disabled"></td>
                                         <td>
                                             <select name='test[][type]'
                                                     class='form-control'
-                                                    style='height: 25px; font-size: 15px; padding-top: 0px; padding-left: 0px; border: none'>
+                                                    style='height: 25px; font-size: 15px; padding-top: 0px; padding-left: 0px; border: none' disabled="disabled">
 
                                                 {% if value|data_type == 'str' %}
                                                     <option>string</option>
@@ -267,11 +282,11 @@
                             {% for foo in request.parameters %}
                                 <tr>
                                     {% for key, value in foo.items %}
-                                        <td><input type="checkbox" name="params" style="width:55px"></td>
+                                        <td><input type="checkbox" name="params" style="width:55px" disabled="disabled"></td>
                                         <td><textarea name='test[][key]'
-                                                      style="width:100%; border: none">{{ key }}</textarea></td>
+                                                      style="width:100%; border: none" disabled="disabled">{{ key }}</textarea></td>
                                         <td><textarea name='test[][value]'
-                                                      style="width:100%; border: none">{{ value }}</textarea></td>
+                                                      style="width:100%; border: none" disabled="disabled">{{ value }}</textarea></td>
 
                                     {% endfor %}
 
@@ -295,21 +310,21 @@
                             {% if request.setup_hooks|length >= request.teardown_hooks|length %}
                                 {% for foo in  request.setup_hooks %}
                                     <tr>
-                                        <td><input type="checkbox" name="hooks" style="width:55px"></td>
+                                        <td><input type="checkbox" name="hooks" style="width:55px" disabled="disabled"></td>
                                         <td><input type="text" name='test[][key]'
-                                                   value="{{ foo }}" style="width:100%; border: none"></td>
+                                                   value="{{ foo }}" style="width:100%; border: none" disabled="disabled"></td>
                                         <td>
                                             {% for foos in  request.teardown_hooks %}
                                                 {% if forloop.parentloop.counter0 == forloop.counter0 %}
                                                     <input type="text" name='test[][value]'
                                                            value="{{ foos }}"
-                                                           style="width:100%; border: none">
+                                                           style="width:100%; border: none" disabled="disabled">
                                                 {% endif %}
                                             {% endfor %}
                                             {% if forloop.counter > request.teardown_hooks|length %}
                                                 <input type="text" name='test[][value]'
                                                        value=""
-                                                       style="width:100%; border: none">
+                                                       style="width:100%; border: none" disabled="disabled">
 
                                             {% endif %}
                                         </td>
@@ -355,14 +370,14 @@
                                 <div class="input-group-addon">URL</div>
                                 <input type="text" class="form-control am-input-sm " placeholder="api url"
                                        name="url" size="{{ request.request.url|str_length }}"
-                                       id="url" value="{{ request.request.url }}">
+                                       id="url" value="{{ request.request.url }}" disabled="disabled">
                             </div>
                         </div>
 
                         <div class="form-group">
                             <div class="input-group">
                                 <div class="input-group-addon">Method</div>
-                                <select class="form-control" name="method" id="method">
+                                <select class="form-control" name="method" id="method" disabled="disabled">
 
                                     <option>{{ request.request.method }}</option>
                                     {% if request.request.method == 'GET' %}
@@ -389,7 +404,7 @@
                         <div class="form-group">
                             <div class="input-group">
                                 <div class="input-group-addon">Type</div>
-                                <select class="form-control" name="DataType" id="DataType">
+                                <select class="form-control" name="DataType" id="DataType" disabled="disabled">
                                     {% if 'data' in request.request.keys %}
                                         <option selected>data</option>
                                         <option>json</option>
@@ -412,16 +427,6 @@
                             </div>
                         </div>
 
-                        <button class="btn btn-info" value="添 加" onclick="add_row('data')" id="add_data">add data
-                        </button>
-                        <button class="btn btn-danger" value="删 除" onclick="del_row('data')" id="del_data">del data
-                        </button>
-                        <button class="btn btn-info" value="添 加" onclick="add_row('header')">add headers</button>
-                        <button class="btn btn-danger" value="删 除" onclick="del_row('header')">del headers</button>
-                        <button class="btn btn-info" value="添 加" onclick="add_row('cookie')">add cookies</button>
-                        <button class="btn btn-danger" value="删 除" onclick="del_row('cookie')">del cookies</button>
-                        <button class="btn btn-info" value="添 加" onclick="add_row('proxy')">add proxies</button>
-                        <button class="btn btn-danger" value="删 除" onclick="del_row('proxy')">del proxies</button>
                         <form id="form_request_data">
                             {% if 'json' in request.request.keys %}
                                 <span style="font-size:10px;" id="json-text">
@@ -605,10 +610,6 @@
                     </div>
                 </div>
                 <div class="am-tab-panel" id="tab4">
-                    <button class="btn btn-info" value="添 加" onclick="add_row('extract')">add extract</button>
-                    <button class="btn btn-danger" value="删 除" onclick="del_row('extract')">del extract</button>
-                    <button class="btn btn-info" value="添 加" onclick="add_row('validate')">add validate</button>
-                    <button class="btn btn-danger" value="删 除" onclick="del_row('validate')">del validate</button>
                     <form id="form_extract">
                         <table class="table table-hover table-condensed table-bordered table-striped" id="extract">
                             <caption>extract:</caption>
@@ -622,13 +623,13 @@
                             <tbody>
                             {% for foo in request.extract %}
                                 <tr>
-                                    <td><input type="checkbox" name="extract" style="width:55px"></td>
+                                    <td><input type="checkbox" name="extract" style="width:55px" disabled="disabled"></td>
                                     {% for key, value in foo.items %}
 
                                         <td><input type="text" name='test[][key]' value="{{ key }}"
-                                                   style="width:100%; border: none"></td>
+                                                   style="width:100%; border: none" disabled="disabled"></td>
                                         <td><input type="text" name='test[][value]' value="{{ value }}"
-                                                   style="width:100%; border: none"></td>
+                                                   style="width:100%; border: none" disabled="disabled"></td>
                                     {% endfor %}
                                 </tr>
                             {% endfor %}
@@ -651,11 +652,11 @@
                             {% for foo in request.validate %}
                                 <tr>
                                     <td><input type="checkbox" name="validate"
-                                               style="width:55px"></td>
+                                               style="width:55px" disabled="disabled"></td>
                                     <td><input type="text" name='test[][key]' value="{{ foo.check }}"
-                                               style="width:100%; border: none"></td>
+                                               style="width:100%; border: none" disabled="disabled"></td>
                                     <td><select name='test[][comparator]' class="form-control"
-                                                style="height: 25px; font-size: 15px; padding-top: 0px; padding-left: 0px; border: none">
+                                                style="height: 25px; font-size: 15px; padding-top: 0px; padding-left: 0px; border: none" disabled="disabled">
                                         {% ifequal foo.comparator 'equals' %}
                                             <option selected>{{ foo.comparator }}</option>
                                         {% else %}
@@ -757,7 +758,7 @@
                                     <td>
                                         <select name='test[][type]'
                                                 class='form-control'
-                                                style='height: 25px; font-size: 15px; padding-top: 0px; padding-left: 0px; border: none'>
+                                                style='height: 25px; font-size: 15px; padding-top: 0px; padding-left: 0px; border: none' disabled="disabled">
                                             {% if foo.expected|data_type == 'str' %}
                                                 <option>string</option>
                                                 <option>int</option>
@@ -782,7 +783,7 @@
                                         </select>
                                     </td>
                                     <td><input type="text" name='test[][value]' value="{{ foo.expected }}"
-                                               style="width:100%; border: none"></td>
+                                               style="width:100%; border: none" disabled="disabled"></td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -796,9 +797,11 @@
 
         <div class="am-form-group am-cf">
             <div class="you" style="margin-left: 11%;">
-                <button type="button" id="save" class="am-btn am-btn-success am-radius">点 击 修 改</button>
+                <a type="submit" href="/api/edit_case/{{ caseid }}/" class="am-btn am-btn-success am-radius">点 击 修 改</a>
                 &raquo;
-                <a type="submit" href="/api/add_case/" class="am-btn am-btn-secondary am-radius">新 增 用 例</a>
+                <button type="button" class="am-btn am-btn-danger am-radius" onclick="run_test('{{ caseid }}')">点 击 运
+                    行
+                </button>
             </div>
         </div>
     </div>
@@ -806,51 +809,10 @@
     <script>
         try {
             editor = ace.edit("code");
-            init_acs('json', 'github', editor);
+            init_acs_readonly('json', 'github', editor);
         } catch (err) {
             editor = null;
         }
-        $('#DataType').on('change', function () {
-            if ($('#DataType').val() === 'json') {
-                $('#add_data').attr('disabled', true);
-                $('#del_data').attr('disabled', true);
-                $('#data').remove();
-                var json_text = "<span style=\"font-size:10px;\" id=\"json-text\">\n" +
-                    "<div style=\"margin-left: 0px; margin-top: 5px; height: 200px\">" +
-                    "<pre id=\"code\" class=\"ace_editor\" style=\"margin-top: 0px; margin-bottom: 0px; min-height: 200px;\">\n" +
-                    "<textarea>\n" +
-                    "{\"key\":\"value\"}\n" +
-                    "</textarea>\n" +
-                    "</pre></div></span>";
-                $('#form_request_data').append(json_text);
-                editor = ace.edit("code");
-                init_acs('json', 'github', editor);
-
-            } else {
-                var table = '<table class="table table-hover table-condensed table-bordered table-striped" id="data">\n' +
-                    '<caption>' + $('#DataType').val() + ':</caption>\n' +
-                    '<thead>\n' +
-                    '<tr class="active text-success">\n' +
-                    '<th width="5%" align="center">Option</th>\n' +
-                    '<th width="30%" align="center">Key</th>\n' +
-                    '<th width="5%" align="center">Type</th>\n' +
-                    '<th width="60%" align="center">Value</th>\n' +
-                    '</tr>\n' +
-                    '</thead>\n' +
-                    '<tbody>\n' +
-                    '</tbody>\n' +
-                    '</table>';
-
-                $('#add_data').text('add ' + $('#DataType').val());
-                $('#del_data').text('del ' + $('#DataType').val());
-
-                $('#add_data').removeAttr("disabled");
-                $('#del_data').removeAttr("disabled");
-                $('#data').remove();
-                $('#json-text').remove();
-                $('#form_request_data').append(table);
-            }
-        });
 
         $("#tab-test").on("click", "li", function () {
             $(this).addClass("am-active").siblings("li").removeClass("am-active");
@@ -863,37 +825,6 @@
             $("#pre_case").disableSelection();
         });
 
-        $('#belong_case_id').on('change', function () {
-            if ($('#belong_case_id').val() !== '请选择') {
-                case_id = $('#belong_case_id').val();
-                case_name = $('#belong_case_id option:selected').text();
-                var href = "<li id=" + case_id + "><a href='/api/edit_case/" + case_id + "/' id = " + case_id + ">" + case_name + "" +
-                    "</a><i class=\"js-remove\" onclick=remove_self('#" + case_id + "')>✖</i></li>";
-                $("#pre_case").append(href);
-            }
-        });
-
-        function remove_self(id) {
-            $(id).remove();
-        }
-
-        $('#config').on('change', function () {
-            if ($('#config').val() !== '请选择') {
-                var case_id = $('#config').val();
-                var case_name = $('#config option:selected').text();
-                var href = "<li id=" + case_id + " name='pre_config'><a style='color: cadetblue' href='/api/edit_config/" + case_id + "/' id = " + case_id + ">" + case_name + "" +
-                    "</a><i class=\"js-remove\" onclick=remove_self('#" + case_id + "')>✖</i></li>";
-                $("li[name='pre_config']").remove();
-                $("#pre_case").prepend(href);
-                $('#config_pre').val("{'config': ['" + case_id + "', '" + case_name + "']}");
-            }
-        });
-
-        $(function () {
-            $('#add_data').text('add ' + $('#DataType').val());
-            $('#del_data').text('del ' + $('#DataType').val());
-        });
-
         $(function () {
             if ($("li[name='pre_config']")) {
                 var case_id = $('#config').val();
@@ -903,19 +834,19 @@
 
         });
 
-        $('#save').on('click', function () {
-            if ($("li[name='pre_config']").length <= 0) {
-                $('#config_pre').val("");
-            }
-            $('#save_test').modal({
+        function run_test(index) {
+            $('#select_env').modal({
                 relatedTarget: this,
                 onConfirm: function () {
-                    case_ajax('edit', editor)
+                    post('/api/run_test/', {
+                        'id': index,
+                        'env_name': $('#env_name').val()
+                    })
                 },
                 onCancel: function () {
                 }
             });
-        })
+        }
 
     </script>
 {% endblock %}
