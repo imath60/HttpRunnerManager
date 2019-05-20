@@ -274,6 +274,143 @@ def op_login():
     return resp.cookies
 
 
+def init_teacher_logic(**kwargs):
+    """
+    一键初始化教师
+    :param kwargs:
+    :return:
+    """
+    phone = kwargs.pop('phone')
+    cate = int(kwargs.pop('cate'))
+    pw = kwargs.pop('pw')
+    kid = kwargs.pop('kid')
+    gender = int(kwargs.pop('gender'))
+
+    resp_vcode = get_vcode(cate, phone)
+    if (resp_vcode['ret'] != 1):
+        return resp_vcode['msg']
+
+    resp_register = user_register(cate, gender, phone, pw)
+    if (resp_register['ret'] != 1):
+        return resp_register['msg']
+
+    resp_login = user_login(cate, phone, pw)
+    if (resp_login['ret'] != 1):
+        return resp_login['msg']
+    token = resp_login['data']['token']
+    uid = resp_login['data']['mid']
+    title = "测试教师"
+    stype = 1
+    identify = "测试证书"
+    picurl = "http://b00.cdn.ipalfish.com/0/ph/1f/fa/de18a9731c0a9e3ac0d513eddbc2"
+
+    resp_set_title = set_title(cate, title, token, uid)
+    if (resp_set_title['ret'] != 1):
+        return resp_set_title['msg']
+
+    resp_set_cert = set_cert(cate, identify, picurl, resp_set_title, stype, token, uid)
+    if (resp_set_cert['ret'] != 1):
+        return resp_set_cert['msg']
+
+    cookies = op_login()
+
+    resp_verf_title = verf_title(cookies, title, uid)
+
+    if (resp_verf_title['ret'] != 1):
+        return resp_verf_title['msg']
+
+    resp_verf_cert = verf_cert(cookies, stype, uid)
+
+    if (resp_verf_cert['ret'] != 1):
+        return resp_verf_cert['msg']
+
+    resp_add_kid = add_kid(cookies, kid, uid)
+
+    if (resp_add_kid['ret'] != 1):
+        return resp_add_kid['msg']
+    return 'success'
+
+
+def add_kid(cookies, kid, uid):
+    data_add_kid = dict()
+    data_add_kid['uid'] = uid
+    data_add_kid['kid'] = kid
+    req_add_kid = dict()
+    req_add_kid['url'] = 'https://test.ipalfish.com:30000/opapi/ugc/curriculum/classroom/kid/teacher/add'
+    req_add_kid['json'] = data_add_kid
+    req_add_kid['cookies'] = cookies
+    resp_add_kid = request_post(req_add_kid)
+    return resp_add_kid
+
+
+def verf_cert(cookies, stype, uid):
+    data_verf_cert = dict()
+    data_verf_cert['uid'] = uid
+    data_verf_cert['status'] = 50
+    data_verf_cert['stype'] = stype
+    req_verf_cert = dict()
+    req_verf_cert['url'] = 'https://test.ipalfish.com:30000/opapi/ugc/curriculum/quality/certification/status/set'
+    req_verf_cert['json'] = data_verf_cert
+    req_verf_cert['cookies'] = cookies
+    resp_verf_cert = request_post(req_verf_cert)
+    return resp_verf_cert
+
+
+def verf_title(cookies, title, uid):
+    data_verf_title = dict()
+    data_verf_title['uid'] = uid
+    data_verf_title['source'] = 2
+    data_verf_title['title'] = title
+    data_verf_title['verify'] = 1
+    req_verf_title = dict()
+    req_verf_title['url'] = 'https://test.ipalfish.com:30000/opapi/account/verify/title'
+    req_verf_title['json'] = data_verf_title
+    req_verf_title['cookies'] = cookies
+    resp_verf_title = request_post(req_verf_title)
+    return resp_verf_title
+
+
+def set_cert(cate, identify, picurl, resp_set_title, stype, token, uid):
+    data_set_cert = dict()
+    data_set_cert['cate'] = cate
+    data_set_cert['token'] = token
+    data_set_cert['h_m'] = uid
+    data_set_cert['stype'] = stype
+    data_set_cert['identify'] = identify
+    data_set_cert['picurl'] = picurl
+    req_set_cert = dict()
+    req_set_cert['url'] = 'https://test.ipalfish.com/klian/ugc/curriculum/quality/certification/set'
+    req_set_cert['json'] = data_set_cert
+    resp_set_title = request_post(req_set_cert)
+    return resp_set_title
+
+
+def set_title(cate, title, token, uid):
+    data_set_title = dict()
+    data_set_title['cate'] = cate
+    data_set_title['token'] = token
+    data_set_title['h_m'] = uid
+    data_set_title['title'] = title
+    req_set_title = dict()
+    req_set_title['url'] = 'https://test.ipalfish.com/klian/account/set/title'
+    req_set_title['json'] = data_set_title
+    resp_set_title = request_post(req_set_title)
+    return resp_set_title
+
+
+def user_login(cate, phone, pw):
+    data_login = dict()
+    data_login['phone'] = phone
+    data_login['pw'] = get_pw_md5(pw)
+    data_login['cate'] = cate
+    data_login['area'] = "86"
+    req_login = dict()
+    req_login['url'] = 'https://test.ipalfish.com/klian/account/login'
+    req_login['json'] = data_login
+    resp_login = request_post(req_login)
+    return resp_login
+
+
 def init_student_logic(**kwargs):
     """
     一键初始化学生
@@ -316,10 +453,11 @@ def given_sectioncn(cookies, kid, sectioncn, uid):
     resp_given_sectioncn = request_post(req_given_sectioncn)
     return resp_given_sectioncn
 
+
 def user_register(cate, gender, phone, pw):
     data_register = dict()
     data_register['phone'] = phone
-    data_register['pw'] = pw
+    data_register['pw'] = get_pw_md5(pw)
     data_register['code'] = "0721"
     data_register['version'] = 1
     data_register['area'] = "86"

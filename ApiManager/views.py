@@ -20,9 +20,11 @@ from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, E
 from ApiManager.tasks import main_hrun
 from ApiManager.utils.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
     set_filter_session, get_ajax_msg, register_info_logic, task_logic, load_modules, upload_file_logic, \
-    init_filter_session, get_total_values, timestamp_to_datetime, hold_time_logic, init_student_logic
+    init_filter_session, get_total_values, timestamp_to_datetime, hold_time_logic, init_student_logic, \
+    init_teacher_logic
 from ApiManager.utils.operation import env_data_logic, del_module_data, del_project_data, del_test_data, copy_test_data, \
-    del_report_data, add_suite_data, copy_suite_data, del_suite_data, edit_suite_data, add_test_reports, batch_del_test_data, batch_del_report_data
+    del_report_data, add_suite_data, copy_suite_data, del_suite_data, edit_suite_data, add_test_reports, \
+    batch_del_test_data, batch_del_report_data
 from ApiManager.utils.pagination import get_pager_info
 from ApiManager.utils.runner import run_by_batch, run_test_by_type
 from ApiManager.utils.task_opt import delete_task, change_task_status
@@ -76,7 +78,7 @@ def login(request):
         username = request.POST.get('account')
         password = request.POST.get('password')
 
-        ret = ldap_check(username,password)
+        ret = ldap_check(username, password)
         if (ret == 97):
             # if UserInfo.objects.filter(username__exact=username).filter(password__exact=password).count() == 1:
             logger.info('{username} 登录成功'.format(username=username))
@@ -87,7 +89,7 @@ def login(request):
             logger.info('{username} 登录失败, 请检查用户名或者密码'.format(username=username))
             request.session["login_status"] = False
             error_msg = '{username} 登录失败, 请检查用户名或者密码'.format(username=username)
-            return render_to_response("login.html",{'error_msg':error_msg})
+            return render_to_response("login.html", {'error_msg': error_msg})
     elif request.method == 'GET':
         return render_to_response("login.html")
 
@@ -324,6 +326,7 @@ def run_test(request):
 
         return render_to_response('report_template.html', runner.summary)
 
+
 @login_check
 def run_batch_test(request):
     """
@@ -499,6 +502,7 @@ def config_list(request, id):
             'project': ProjectInfo.objects.all().order_by('-update_time')
         }
         return render_to_response('config_list.html', manage_info)
+
 
 @login_check
 def detail_case(request, id=None):
@@ -915,13 +919,28 @@ def hold_time(request):
     elif request.method == 'GET':
         return render_to_response('hold_time.html')
 
+
+@login_check
+def init_teacher(request):
+    if request.is_ajax():
+        init_teacher_info = json.loads(request.body.decode('utf-8'))
+
+        init_teacher_info['cate'] = 2
+        init_teacher_info['kid'] = 173108934578178
+
+        print(init_teacher_info)
+        msg = init_teacher_logic(**init_teacher_info)
+        return HttpResponse(get_ajax_msg(msg, '/api/init_teacher/'))
+    elif request.method == 'GET':
+        return render_to_response('init_teacher.html')
+
+
 @login_check
 def init_student(request):
     if request.is_ajax():
         init_student_info = json.loads(request.body.decode('utf-8'))
 
         init_student_info['cate'] = 1
-        # init_student_info['sectioncn'] = 1
         init_student_info['kid'] = 173108934578178
 
         print(init_student_info)
@@ -929,6 +948,7 @@ def init_student(request):
         return HttpResponse(get_ajax_msg(msg, '/api/init_student/'))
     elif request.method == 'GET':
         return render_to_response('init_student.html')
+
 
 @login_check
 @accept_websocket
