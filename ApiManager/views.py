@@ -20,7 +20,7 @@ from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, E
 from ApiManager.tasks import main_hrun
 from ApiManager.utils.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
     set_filter_session, get_ajax_msg, register_info_logic, task_logic, load_modules, upload_file_logic, \
-    init_filter_session, get_total_values, timestamp_to_datetime, hold_time_logic
+    init_filter_session, get_total_values, timestamp_to_datetime, hold_time_logic, init_student_logic
 from ApiManager.utils.operation import env_data_logic, del_module_data, del_project_data, del_test_data, copy_test_data, \
     del_report_data, add_suite_data, copy_suite_data, del_suite_data, edit_suite_data, add_test_reports, batch_del_test_data, batch_del_report_data
 from ApiManager.utils.pagination import get_pager_info
@@ -913,13 +913,22 @@ def hold_time(request):
         return HttpResponse(get_ajax_msg(msg, '/api/hold_time/'))
 
     elif request.method == 'GET':
-        # manage_info = {
-        #     'account': account,
-        #     'project': ProjectInfo.objects.all().values('project_name').order_by('-create_time')
-        # }
-        # return render_to_response('add_case.html', manage_info)
         return render_to_response('hold_time.html')
 
+@login_check
+def init_student(request):
+    if request.is_ajax():
+        init_student_info = json.loads(request.body.decode('utf-8'))
+
+        init_student_info['cate'] = 1
+        # init_student_info['sectioncn'] = 1
+        init_student_info['kid'] = 173108934578178
+
+        print(init_student_info)
+        msg = init_student_logic(**init_student_info)
+        return HttpResponse(get_ajax_msg(msg, '/api/init_student/'))
+    elif request.method == 'GET':
+        return render_to_response('init_student.html')
 
 @login_check
 @accept_websocket

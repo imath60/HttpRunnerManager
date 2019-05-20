@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}一键注册学生{% endblock %}
+{% load staticfiles %}
+{% block content %}
+
+    <div class=" admin-content">
+
+        <div class="admin-biaogelist">
+            <div class="listbiaoti am-cf">
+                <ul class="am-icon-flag on"> 一键注册学生</ul>
+                <dl class="am-icon-home" style="float: right;"> 当前位置： 测试工具箱 > <a href="#">一键注册学生</a></dl>
+            </div>
+            <div class="fbneirong">
+                <form class="form-horizontal" id="init_student">
+                    <div class="form-group  has-feedback">
+                        <label class="control-label col-md-1 text-primary" for="phone">学生手机号：</label>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" id="phone"
+                                   aria-describedby="inputSuccess3Status" name="phone" placeholder="请输入学生手机号"
+                                   value="">
+                            <span class="glyphicon glyphicon-th-list form-control-feedback" aria-hidden="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group  has-feedback">
+                        <label class="control-label col-md-1 text-primary" for="pw">学生密码：</label>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" id="pw" name="pw"
+                                   aria-describedby="inputSuccess3Status" placeholder="请输入学生密码" value="">
+                            <span class="glyphicon glyphicon-user form-control-feedback" aria-hidden="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group  has-feedback">
+                        <label class="control-label col-md-1 text-primary" for="gender">性别：</label>
+                        <div class="col-md-5">
+                            <select class="control" id="gender" name="gender">
+                                 <option value="1">男</option>
+                                 <option value="2">女</option>
+                            </select>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group  has-feedback">
+                        <label class="control-label col-md-1 text-primary" for="sectioncn">官方赠课数：</label>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" id="sectioncn" name="sectioncn"
+                                   aria-describedby="inputSuccess3Status" placeholder="请输入官方赠课数量" value="">
+                            <span class="glyphicon glyphicon-user form-control-feedback" aria-hidden="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="am-form-group am-cf">
+                        <div class="you" style="margin-left: 8%;">
+                            <button type="button" class="am-btn am-btn-success am-radius"
+                                    onclick="tool_ajax('#init_student', '/api/init_student/')">点 击 提 交
+                            </button>&nbsp;
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

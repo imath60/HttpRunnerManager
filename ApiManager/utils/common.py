@@ -20,7 +20,6 @@ from ApiManager.utils.operation import add_project_data, add_module_data, add_ca
     add_register_data
 from ApiManager.utils.task_opt import create_task
 
-
 logger = logging.getLogger('HttpRunnerManager')
 
 
@@ -226,6 +225,7 @@ def project_info_logic(type=True, **kwargs):
 
     return add_project_data(type, **kwargs)
 
+
 def get_pw_md5(pw):
     pw = str(pw)
     m = hashlib.md5()
@@ -243,11 +243,110 @@ def get_timestamp(dt):
     timestamp = time.mktime(time_arr)
     return int(timestamp)
 
+
 def request_post(data_req):
-    resp = requests.post(url=data_req['url'], json=data_req['json'])
+    if 'cookies' not in data_req:
+        data_req['cookies'] = None
+    resp = requests.post(url=data_req['url'], json=data_req['json'], cookies=data_req['cookies'])
     print(resp.text)
     data_resp = json.loads(resp.content)
     return data_resp
+
+
+def request_get(data_req):
+    if 'cookies' not in data_req:
+        data_req['cookies'] = None
+    resp = requests.get(url=data_req['url'], params=data_req['params'], cookies=data_req['cookies'])
+    print(resp.text)
+    data_resp = json.loads(resp.content)
+    return data_resp
+
+
+def op_login():
+    url = "https://test.ipalfish.com:30000/auth/login"
+    data = dict()
+    data['utype'] = "op"
+    data['user'] = "liuyuan2680"
+    data['ttype'] = "phone"
+    data['ticket'] = ""
+
+    resp = requests.post(url=url, json=data)
+    return resp.cookies
+
+
+def init_student_logic(**kwargs):
+    """
+    一键初始化学生
+    :param kwargs:
+    :return:
+    """
+    phone = kwargs.pop('phone')
+    cate = int(kwargs.pop('cate'))
+    pw = kwargs.pop('pw')
+    sectioncn = int(kwargs.pop('sectioncn'))
+    kid = kwargs.pop('kid')
+    gender = int(kwargs.pop('gender'))
+
+    resp_vcode = get_vcode(cate, phone)
+    if (resp_vcode['ret'] != 1):
+        return resp_vcode['msg']
+
+    resp_register = user_register(cate, gender, phone, pw)
+    if (resp_register['ret'] != 1):
+        return resp_register['msg']
+    uid = resp_register['data']['mid']
+    cookies = op_login()
+
+    resp_given_sectioncn = given_sectioncn(cookies, kid, sectioncn, uid)
+    if (resp_given_sectioncn['ret'] != 1):
+        return resp_given_sectioncn['msg']
+
+    return 'success'
+
+
+def given_sectioncn(cookies, kid, sectioncn, uid):
+    data_given_sectioncn = dict()
+    data_given_sectioncn['uid'] = uid
+    data_given_sectioncn['kid'] = kid
+    data_given_sectioncn['sectioncn'] = sectioncn
+    req_given_sectioncn = dict()
+    req_given_sectioncn['url'] = "https://test.ipalfish.com:30000/opapi/ugc/curriculum/classroom/give"
+    req_given_sectioncn['json'] = data_given_sectioncn
+    req_given_sectioncn['cookies'] = cookies
+    resp_given_sectioncn = request_post(req_given_sectioncn)
+    return resp_given_sectioncn
+
+def user_register(cate, gender, phone, pw):
+    data_register = dict()
+    data_register['phone'] = phone
+    data_register['pw'] = pw
+    data_register['code'] = "0721"
+    data_register['version'] = 1
+    data_register['area'] = "86"
+    data_register['cate'] = cate
+    data_register['gender'] = gender
+    data_register['name'] = phone
+    req_register = dict()
+    req_register['url'] = 'https://test.ipalfish.com/klian/account/register'
+    req_register['json'] = data_register
+    resp_register = request_post(req_register)
+    return resp_register
+
+
+def get_vcode(cate, phone):
+    data_vcode = dict()
+    data_vcode['phone'] = phone
+    data_vcode['cate'] = cate
+    data_vcode['area'] = "86"
+    data_vcode['vtype'] = "register"
+    data_vcode['version'] = 1
+    data_vcode['h_lc'] = "zh-Hans-CN"
+    req_vcode = dict()
+    req_vcode['url'] = 'https://test.ipalfish.com/klian/account/vcode'
+    req_vcode['json'] = data_vcode
+    resp_vcode = request_post(req_vcode)
+    return resp_vcode
+
 
 def hold_time_logic(**kwargs):
     """
@@ -735,7 +834,7 @@ def update_include(include):
             try:
                 name = TestCaseInfo.objects.get(id=id).name
             except ObjectDoesNotExist:
-                name = source_name+'_已删除!'
+                name = source_name + '_已删除!'
                 logger.warning('依赖的 {name} 用例/配置已经被删除啦！！'.format(name=source_name))
 
             include[i] = {
