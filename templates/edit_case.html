@@ -126,6 +126,10 @@
                                 <div class="input-group col-md-10 col-md-offset-1">
                                     <div class="input-group-addon" style="color: #0a628f">可选配置</div>
                                     <select id="config" name="config" class="form-control">
+                                        {% if 'config' in include.0.keys %}
+                                            <option value="{{ include.0.config.0 }}">{{ include.0.config.1 }}</option>
+                                        {% endif %}
+
                                     </select>
                                 </div>
                             </div>
